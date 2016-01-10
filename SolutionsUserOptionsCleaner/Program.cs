@@ -1,24 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SolutionsUserOptionsCleaner
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static string[] _filesToDelete;
+
+        private static void Main(string[] args)
         {
-            ArgumentValidator validator = new ArgumentValidator(args);
+            if (!ArgsAreValid(args))
+                return;
+
+            FindSuoFiles(args);
+            DeleteFiles();
+        }
+
+        private static void DeleteFiles()
+        {
+            foreach (var file in _filesToDelete)
+                File.Delete(file);
+        }
+
+        private static void FindSuoFiles(string[] args)
+        {
+            var baseDir = args[0];
+            _filesToDelete = Directory.GetFiles(baseDir, "*.suo", SearchOption.AllDirectories);
+        }
+
+        private static bool ArgsAreValid(string[] args)
+        {
+            return SetupValidator(args).Valid();
+        }
+
+        private static ArgumentValidator SetupValidator(string[] args)
+        {
+            var validator = new ArgumentValidator(args);
+            validator.ProcessErrorsOnInvalid = true;
+            AddValidatorRules(validator);
+            return validator;
+        }
+
+        private static void AddValidatorRules(ArgumentValidator validator)
+        {
             validator.Rules.Add(x => x.Any());
             validator.Rules.Add(x => Directory.Exists(x[0]));
-            if(!validator.Valid())
-                foreach (var error in validator.Errors)
-                    Console.WriteLine(error);
-
-
         }
     }
 }
