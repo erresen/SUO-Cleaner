@@ -10,9 +10,10 @@ namespace SolutionsUserOptionsCleaner
             Args = args ?? new List<string>();
             Rules = new List<Func<IList<string>, bool>>();
             Errors = new List<string>();
+            ProcessErrorsOnInvalid = false;
         }
         public IList<string> Args { get; private set; }
-
+        public bool ProcessErrorsOnInvalid { get; set; }
         public List<Func<IList<string>, bool>> Rules { get; set; }
         public List<string> Errors { get; private set; }
         private Action<string> _errorProcessingAction = (err) => Console.WriteLine(err);
